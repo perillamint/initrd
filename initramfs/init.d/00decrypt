@@ -1,0 +1,2 @@
+#!/bin/busybox sh
+cryptsetup open $(findfs PARTLABEL=linuxdata) linuxdata

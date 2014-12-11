@@ -1,0 +1,17 @@
+cmdline() {
+    local value
+    value=" $(cat /proc/cmdline) "
+    value="${value##* $1=}"
+    value="${value%% *}"
+    [ "$value" != "" ] && echo "$value"
+}
+
+boot_system() {
+    #Prepare to leave ramdisk.
+    umount /dev
+    umount /proc
+    umount /sys
+
+    #Switch init with switch_root. There is NO WAY BACK after executing this.
+    exec busybox switch_root $NEWROOT_MNT $NEWINIT
+}

@@ -1,0 +1,4 @@
+*.so.*
+*.so
+initramfs/usr/bin/*
+initramfs/usr/sbin/*

@@ -1,0 +1,82 @@
+#!/bin/busybox sh
+
+source inithelper
+
+rescue_shell() {
+    echo "Spawning rescue shell.."
+    exec /bin/sh
+}
+
+run_initd() {
+    for _SCRIPT in /init.d/*
+    do
+        echo "Executing " $_SCRIPT
+        eval $_SCRIPT
+	if [[ $? -ne 0 ]]
+	then
+	    echo "ERR: failed to execute " $_SCRIPT "."
+	    return 1
+	fi
+    done
+
+    return 0
+}
+
+echo "Hello, world! From initrd."
+
+/bin/busybox --install -s
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+
+export PATH=/bin:/sbin
+export NEWINIT=$(cmdline init)
+export NEWROOT=$(cmdline root)
+export NEWROOTFLAGS=$(cmdline rootflags)
+
+for _var in $(cat init.env)
+do
+    export $_var
+done
+
+for i in run_initd
+do
+    eval $i
+    if [[ $? -ne 0 ]]
+    then
+        echo "ERR: failed to run " $i ". Entering rescue mode."
+	rescue_shell
+    fi
+done
+
+echo -e "All done! Waiting for " $BOOTWAIT " second before boot. Press r to cancel and enter rescue mode.\nAny other key will immediately boot system."
+
+_count=$BOOTWAIT
+
+while [[ $_count -gt 0 ]]
+do
+    local input
+    read -t 1 -n 1 -s -p "T-$_count" input
+
+    if [[ $? -eq 0 ]]
+    then
+        echo
+        case $(echo $input | tr '[:upper:]' '[:lower:]') in
+	r)
+	    echo "OK. Entering rescue mode."
+	    rescue_shell
+	    ;;
+	*)
+	    echo "OK. Booting system."
+	    boot_system
+	    ;;
+        esac
+    else
+        echo
+    fi
+
+    let _count=_count-1
+done
+
+boot_system
