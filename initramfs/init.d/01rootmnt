@@ -1,0 +1,2 @@
+#!/bin/busybox sh
+mount -o ro,$NEWROOTFLAGS $(findfs $NEWROOT) $NEWROOT_MNT

@@ -1,6 +1,4 @@
 #!/bin/busybox sh
-mount -o ro,$NEWROOTFLAGS $(findfs $NEWROOT) $NEWROOT_MNT
-
 #TODO: need to be cleaned after systemd bug fix.
 mount -o rw,relatime,thread_pool=4,space_cache,subvol=@home /dev/mapper/linuxdata $NEWROOT_MNT/home
 mount -o rw,relatime,thread_pool=4,space_cache,subvol=@cdimage /dev/mapper/linuxdata $NEWROOT_MNT/mnt/cdimage
