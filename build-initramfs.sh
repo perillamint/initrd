@@ -2,7 +2,7 @@
 FIRMWARE_DIR=/lib/firmware
 cd /usr/src/initrd/initramfs
 
-for dir in dev proc sys mnt mnt/root usr usr/sbin usr/bin usr/lib
+for dir in dev proc sys tmp mnt mnt/root usr usr/sbin usr/bin usr/lib
 do
     if [ ! -d $dir ]
     then
