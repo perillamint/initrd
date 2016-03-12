@@ -1,4 +1,5 @@
 #!/bin/bash
+FIRMWARE_DIR=/lib/firmware
 cd /usr/src/initrd/initramfs
 
 for dir in dev proc sys mnt mnt/root usr usr/sbin usr/bin usr/lib
@@ -10,6 +11,14 @@ do
 done
 
 cd ..
+
+rm -rfv initramfs/lib
+mkdir -p initramfs/lib/firmware
+
+for i in $(cat firmware-list)
+do
+    cp -r $i initramfs/lib/firmware/
+done
 
 lddtree --copy-to-tree=initramfs $(cat elflist)
 
