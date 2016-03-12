@@ -17,7 +17,7 @@ mkdir -p initramfs/lib/firmware
 
 for i in $(cat firmware-list)
 do
-    cp -r $i initramfs/lib/firmware/
+    cp -r $FIRMWARE_DIR/$i initramfs/lib/firmware/
 done
 
 lddtree --copy-to-tree=initramfs $(cat elflist)
